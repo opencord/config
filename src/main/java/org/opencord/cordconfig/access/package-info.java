@@ -17,4 +17,4 @@
 /**
  * Meta Application for hosting common cord configuration classes.
  */
-package org.onosproject.cordconfig.access;
+package org.opencord.cordconfig.access;

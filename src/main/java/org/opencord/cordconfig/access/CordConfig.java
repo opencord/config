@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onosproject.cordconfig.access;
+package org.opencord.cordconfig.access;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.felix.scr.annotations.Activate;

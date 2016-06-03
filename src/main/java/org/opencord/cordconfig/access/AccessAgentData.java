@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onosproject.cordconfig.access;
+package org.opencord.cordconfig.access;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.tuple.Pair;

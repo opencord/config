@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onosproject.cordconfig.access;
+package org.opencord.cordconfig.access;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
