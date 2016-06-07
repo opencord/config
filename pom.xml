@@ -27,7 +27,7 @@
     </parent>
 
     <groupId>org.opencord</groupId>
-    <artifactId>config</artifactId>
+    <artifactId>cord-config</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
@@ -45,7 +45,7 @@
     <properties>
         <onos.app.name>org.opencord.config</onos.app.name>
         <onos.version>1.6.0-rc1</onos.version>
-        <onos.app.title>CORD Configuratuon Meta Application</onos.app.title>
+        <onos.app.title>CORD Configuration Meta Application</onos.app.title>
         <onos.app.category>Utility</onos.app.category>
         <onos.app.url>http://opencord.org</onos.app.url>
     </properties>
@@ -61,8 +61,8 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
         </dependency>
-       
-         <!-- TODO FIX ONOS ROOT POM to split thirdparty and onos dependencies -->        
+
+         <!-- TODO FIX ONOS ROOT POM to split thirdparty and onos dependencies -->
         <dependency>
             <groupId>org.onosproject</groupId>
             <artifactId>onlab-misc</artifactId>
