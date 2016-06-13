@@ -15,6 +15,6 @@
  */
 
 /**
- * CORD access configuration classes.
+ * Meta Application for hosting common cord configuration classes.
  */
-package org.opencord.cordconfig.access;
+package org.opencord.cordconfig;

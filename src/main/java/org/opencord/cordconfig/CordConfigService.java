@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.opencord.cordconfig.access;
+package org.opencord.cordconfig;
 
+import org.onosproject.event.ListenerService;
 import org.onosproject.net.DeviceId;
+import org.opencord.cordconfig.access.AccessAgentData;
+import org.opencord.cordconfig.access.AccessDeviceData;
 
 import java.util.Optional;
 import java.util.Set;
@@ -24,7 +27,8 @@ import java.util.Set;
 /**
  * Provides access to the common CORD configuration.
  */
-public interface CordConfigService {
+public interface CordConfigService
+        extends ListenerService<CordConfigEvent, CordConfigListener> {
 
     /**
      * Retrieves the set of all access devices in the system.

@@ -16,6 +16,7 @@
 
 package org.opencord.cordconfig.access;
 
+import com.google.common.base.MoreObjects;
 import org.onlab.packet.VlanId;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.PortNumber;
@@ -87,5 +88,15 @@ public class AccessDeviceData {
      */
     public Optional<VlanId> defaultVlan() {
         return defaultVlan;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                .add("deviceId", deviceId)
+                .add("uplink", uplink)
+                .add("vlan", vlan)
+                .add("defaultVlan", defaultVlan)
+                .toString();
     }
 }

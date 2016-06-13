@@ -16,6 +16,7 @@
 
 package org.opencord.cordconfig.access;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onlab.packet.MacAddress;
@@ -122,5 +123,15 @@ public class AccessAgentData {
         }
 
         return Optional.of(sortedOltChips.get(index).getKey());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                .add("oltMacInfo", oltMacInfo)
+                .add("agentMac", agentMac)
+                .add("vtnLocation", vtnLocation)
+                .add("deviceId", deviceId)
+                .toString();
     }
 }

@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
+package org.opencord.cordconfig;
+
+import org.onosproject.event.EventListener;
+
 /**
- * CORD access configuration classes.
+ * Listener for CORD config events.
  */
-package org.opencord.cordconfig.access;
+public interface CordConfigListener extends EventListener<CordConfigEvent> {
+}

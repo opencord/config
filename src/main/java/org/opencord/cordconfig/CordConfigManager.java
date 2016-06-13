@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opencord.cordconfig.access;
+package org.opencord.cordconfig;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.felix.scr.annotations.Activate;
@@ -23,12 +23,19 @@ import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
+import org.onosproject.event.ListenerRegistry;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.config.ConfigFactory;
 import org.onosproject.net.config.NetworkConfigEvent;
 import org.onosproject.net.config.NetworkConfigListener;
 import org.onosproject.net.config.NetworkConfigRegistry;
 import org.onosproject.net.config.basics.SubjectFactories;
+import org.opencord.cordconfig.access.AccessAgentConfig;
+import org.opencord.cordconfig.access.AccessAgentData;
+import org.opencord.cordconfig.access.AccessDeviceConfig;
+import org.opencord.cordconfig.access.AccessDeviceData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +49,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Service
 @Component(immediate = true)
-public class CordConfig implements CordConfigService {
+public class CordConfigManager extends ListenerRegistry<CordConfigEvent, CordConfigListener>
+        implements CordConfigService {
+    private static Logger log = LoggerFactory.getLogger(CordConfigManager.class);
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     protected NetworkConfigRegistry networkConfig;
@@ -112,10 +121,21 @@ public class CordConfig implements CordConfigService {
     private void addAccessDevice(AccessDeviceConfig config) {
         AccessDeviceData accessDevice = config.getAccessDevice();
         accessDevices.put(accessDevice.deviceId(), accessDevice);
+        process(new CordConfigEvent(CordConfigEvent.Type.ACCESS_DEVICE_ADDED, accessDevice));
     }
 
-    private void removeAccessDeviceConfig(DeviceId subject) {
-        accessDevices.remove(subject);
+    private void updateAccessDevice(AccessDeviceConfig config, AccessDeviceConfig prevConfig) {
+        AccessDeviceData prevAccessDevice = prevConfig.getAccessDevice();
+        accessDevices.remove(prevConfig.subject());
+        AccessDeviceData accessDevice = config.getAccessDevice();
+        accessDevices.put(accessDevice.deviceId(), accessDevice);
+        process(new CordConfigEvent(CordConfigEvent.Type.ACCESS_DEVICE_UPDATED, accessDevice, prevAccessDevice));
+    }
+
+    private void removeAccessDevice(AccessDeviceConfig prevConfig) {
+        AccessDeviceData prevAccessDevice = prevConfig.getAccessDevice();
+        accessDevices.remove(prevConfig.subject());
+        process(new CordConfigEvent(CordConfigEvent.Type.ACCESS_DEVICE_REMOVED, prevAccessDevice));
     }
 
     private void addAccessAgentConfig(DeviceId subject) {
@@ -129,10 +149,21 @@ public class CordConfig implements CordConfigService {
     private void addAccessAgent(AccessAgentConfig config) {
         AccessAgentData accessAgent = config.getAgent();
         accessAgents.put(accessAgent.deviceId(), accessAgent);
+        process(new CordConfigEvent(CordConfigEvent.Type.ACCESS_AGENT_ADDED, accessAgent, null));
     }
 
-    private void removeAccessAgentConfig(DeviceId subject) {
-        accessAgents.remove(subject);
+    private void updateAccessAgent(AccessAgentConfig config, AccessAgentConfig prevConfig) {
+        AccessAgentData prevAccessAgent = prevConfig.getAgent();
+        accessAgents.remove(prevConfig.subject());
+        AccessAgentData accessAgent = config.getAgent();
+        accessAgents.put(accessAgent.deviceId(), accessAgent);
+        process(new CordConfigEvent(CordConfigEvent.Type.ACCESS_AGENT_UPDATED, accessAgent, prevAccessAgent));
+    }
+
+    private void removeAccessAgent(AccessAgentConfig prevConfig) {
+        AccessAgentData prevAccessAgent = prevConfig.getAgent();
+        accessAgents.remove(prevConfig.subject());
+        process(new CordConfigEvent(CordConfigEvent.Type.ACCESS_AGENT_REMOVED, null, prevAccessAgent));
     }
 
     @Override
@@ -160,26 +191,38 @@ public class CordConfig implements CordConfigService {
     private class InternalNetworkConfigListener implements NetworkConfigListener {
         @Override
         public void event(NetworkConfigEvent event) {
-            switch (event.type()) {
-            case CONFIG_ADDED:
-            case CONFIG_UPDATED:
-                if (event.configClass().equals(ACCESS_DEVICE_CONFIG_CLASS)) {
-                    addAccessDeviceConfig((DeviceId) event.subject());
-                } else if (event.configClass().equals(ACCESS_AGENT_CONFIG_CLASS)) {
-                    addAccessAgentConfig((DeviceId) event.subject());
+            if (event.configClass().equals(ACCESS_DEVICE_CONFIG_CLASS)) {
+                AccessDeviceConfig config = (AccessDeviceConfig) event.config().orElse(null);
+                AccessDeviceConfig prevConfig = (AccessDeviceConfig) event.prevConfig().orElse(null);
+                switch (event.type()) {
+                    case CONFIG_ADDED:
+                        addAccessDevice(config);
+                        break;
+                    case CONFIG_UPDATED:
+                        updateAccessDevice(config, prevConfig);
+                        break;
+                    case CONFIG_REMOVED:
+                        removeAccessDevice(prevConfig);
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            case CONFIG_REMOVED:
-                if (event.configClass().equals(ACCESS_DEVICE_CONFIG_CLASS)) {
-                    removeAccessDeviceConfig((DeviceId) event.subject());
-                } else if (event.configClass().equals(ACCESS_AGENT_CONFIG_CLASS)) {
-                    removeAccessAgentConfig((DeviceId) event.subject());
+            } else if (event.configClass().equals(ACCESS_AGENT_CONFIG_CLASS)) {
+                AccessAgentConfig config = (AccessAgentConfig) event.config().orElse(null);
+                AccessAgentConfig prevConfig = (AccessAgentConfig) event.prevConfig().orElse(null);
+                switch (event.type()) {
+                    case CONFIG_ADDED:
+                        addAccessAgent(config);
+                        break;
+                    case CONFIG_UPDATED:
+                        updateAccessAgent(config, prevConfig);
+                        break;
+                    case CONFIG_REMOVED:
+                        removeAccessAgent(prevConfig);
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            case CONFIG_REGISTERED:
-            case CONFIG_UNREGISTERED:
-            default:
-                break;
             }
         }
     }
