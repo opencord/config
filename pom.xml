@@ -23,6 +23,7 @@
         <groupId>org.onosproject</groupId>
         <artifactId>onos-dependencies</artifactId>
         <version>1.10.3</version>
+        <relativePath></relativePath>
     </parent>
 
     <groupId>org.opencord</groupId>
