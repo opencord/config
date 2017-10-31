@@ -28,7 +28,7 @@
 
     <groupId>org.opencord</groupId>
     <artifactId>cord-config</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <description>CORD configuration meta application</description>
