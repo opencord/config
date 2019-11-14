@@ -17,12 +17,11 @@
 package org.opencord.cordconfig;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Deactivate;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.ReferenceCardinality;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.onosproject.event.ListenerRegistry;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.config.ConfigFactory;
@@ -47,13 +46,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Manages the common CORD configuration.
  */
-@Service
 @Component(immediate = true)
 public class CordConfigManager extends ListenerRegistry<CordConfigEvent, CordConfigListener>
         implements CordConfigService {
     private static Logger log = LoggerFactory.getLogger(CordConfigManager.class);
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     protected NetworkConfigRegistry networkConfig;
 
     private Map<DeviceId, AccessDeviceData> accessDevices = new ConcurrentHashMap<>();
